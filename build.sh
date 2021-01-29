@@ -64,11 +64,21 @@ fi
 ###############################################################################
 
 build(){
+    if [ ! -d fastestPort ];then
+        mkdir fastestPort
+    fi
     local buildTime=$(date +%FT%T)
     local gitHash=$(git rev-parse HEAD 2>/dev/null)
     ldflags="-w -s -X fastestPort/main.BuildTime=${buildTime} -X fastestPort/main.GitHash=${gitHash}"
     echo "Build fastestPort..."
-    go build -ldflags "${ldflags}" -o fastestPort .
+    go build -ldflags "${ldflags}" -o fastestPort/fastestPort .
+    cp config.toml fastestPort
+}
+
+pack(){
+    build
+    tar -jcvf fastestPort.tar.bz2 fastestPort
+    /bin/rm -rf fastestPort
 }
 
 em(){
