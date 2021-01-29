@@ -91,9 +91,14 @@ install(){
         mkdir -p ${dest}
     fi
     link="https://gitee.com/sunliang711/fastest-port/attach_files/602831/download/fastestPort.tar.bz2"
+    tarFile="${link##*/}"
     cd /tmp
-    curl -LO "${link}"
-    tar -C $dest -jxvf ${link##*/}
+    if [ ! -e "${tarFile}" ];then
+        curl -LO "${link}"
+    else
+        echo "Use /tmp/${tarFile} cache file"
+    fi
+    tar -C $dest -jxvf ${tarFile}
 }
 
 em(){
