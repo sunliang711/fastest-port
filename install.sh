@@ -87,10 +87,33 @@ fi
 ###############################################################################
 install(){
     local dest=${1:?'missing instal location'}
+    # 下面使用tar解压是指定了-C(此时的PWD是/tmp)，因此在这里就需要
+    # 把dest转换成绝对路径
+    dest="$(realpath $dest)"
+    echo "Install location: ${dest}"
     if [ ! -d $dest ];then
         mkdir -p ${dest}
     fi
-    link="https://gitee.com/sunliang711/fastest-port/attach_files/602831/download/fastestPort.tar.bz2"
+    linuxARMLink="https://gitee.com/sunliang711/fastest-port/attach_files/603242/download/fastestPort-linux-arm64.tar.bz2"
+    linuxAMDLink="https://gitee.com/sunliang711/fastest-port/attach_files/603243/download/fastestPort-linux-amd64.tar.bz2"
+
+    case $(uname) in
+        Linux)
+            case $(uname -m) in
+                #树莓派4
+                aarch64)
+                    link="$linuxARMLink"
+                ;;
+                x86_64)
+                    link="$linuxAMDLink"
+                ;;
+            esac
+        ;;
+        *)
+            echo "Only support Linux currently"
+            exit 1
+        ;;
+    esac
     tarFile="${link##*/}"
     cd /tmp
     if [ ! -e "${tarFile}" ];then
@@ -99,6 +122,9 @@ install(){
         echo "Use /tmp/${tarFile} cache file"
     fi
     tar -C $dest -jxvf ${tarFile}
+
+    (cd ${dest} && mv ${tarFile%.tar.bz2} fastestPort)
+
 }
 
 em(){
