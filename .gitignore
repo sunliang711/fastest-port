@@ -1,5 +1,4 @@
 .DS_Store
 *.swp
 .idea/
-fastestPort
-fastestPort.tar.bz2
+fastestPort*

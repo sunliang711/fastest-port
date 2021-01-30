@@ -64,21 +64,41 @@ fi
 ###############################################################################
 
 build(){
-    if [ ! -d fastestPort ];then
-        mkdir fastestPort
+    _build linux amd64
+    _build linux arm64
+}
+
+_build(){
+    local os=${1:?'missing GOOS'}
+    local arch=${2:?'mmissing GOARCH'}
+    local resultDir="fastestPort-$os-$arch"
+    if [ ! -d "${resultDir}" ];then
+        mkdir -p "${resultDir}"
     fi
+
     local buildTime=$(date +%FT%T)
     local gitHash=$(git rev-parse HEAD 2>/dev/null)
-    ldflags="-w -s -X fastestPort/main.BuildTime=${buildTime} -X fastestPort/main.GitHash=${gitHash}"
-    echo "Build fastestPort..."
-    go build -ldflags "${ldflags}" -o fastestPort/fastestPort .
-    cp config.toml fastestPort
+    ldflags="-w -s -X main.BuildTime=${buildTime} -X main.GitHash=${gitHash}"
+    echo "Build fastestPort ($os-$arch)..."
+
+    GOOS=$os GOARCH=$arch go build -ldflags "${ldflags}" -o ${resultDir}/fastestPort .
+    cp config.toml ${resultDir}
+
+}
+
+_pack(){
+    local os=${1:?'missing GOOS'}
+    local arch=${2:?'missing GOARCH'}
+    local resultDir="fastestPort-$os-$arch"
+
+    _build $os $arch
+    tar -jcvf ${resultDir}.tar.bz2 ${resultDir}
+    /bin/rm -rf ${resultDir}
 }
 
 pack(){
-    build
-    tar -jcvf fastestPort.tar.bz2 fastestPort
-    /bin/rm -rf fastestPort
+    _pack linux amd64
+    _pack linux arm64
 }
 
 em(){
