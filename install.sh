@@ -94,8 +94,9 @@ install(){
     if [ ! -d $dest ];then
         mkdir -p ${dest}
     fi
-    linuxARMLink="https://gitee.com/sunliang711/fastest-port/attach_files/603242/download/fastestPort-linux-arm64.tar.bz2"
-    linuxAMDLink="https://gitee.com/sunliang711/fastest-port/attach_files/603243/download/fastestPort-linux-amd64.tar.bz2"
+    version=${2:-1.2}
+    linuxAMDLink="https://source711.oss-cn-shanghai.aliyuncs.com/fastest-port/${version}/fastest-port-linux-amd64.tar.bz2"
+    linuxARMLink="https://source711.oss-cn-shanghai.aliyuncs.com/fastest-port/${version}/fastest-port-linux-arm64.tar.bz2"
 
     case $(uname) in
         Linux)
@@ -123,7 +124,7 @@ install(){
     fi
     tar -C $dest -jxvf ${tarFile}
 
-    (cd ${dest} && mv ${tarFile%.tar.bz2} fastestPort)
+    (cd ${dest} && mv ${tarFile%.tar.bz2} fastest-port)
 
 }
 

@@ -71,7 +71,7 @@ build(){
 _build(){
     local os=${1:?'missing GOOS'}
     local arch=${2:?'mmissing GOARCH'}
-    local resultDir="fastestPort-$os-$arch"
+    local resultDir="fastest-port-$os-$arch"
     if [ ! -d "${resultDir}" ];then
         mkdir -p "${resultDir}"
     fi
@@ -79,9 +79,9 @@ _build(){
     local buildTime=$(date +%FT%T)
     local gitHash=$(git rev-parse HEAD 2>/dev/null)
     ldflags="-w -s -X main.BuildTime=${buildTime} -X main.GitHash=${gitHash}"
-    echo "Build fastestPort ($os-$arch)..."
+    echo "Build fastest-port ($os-$arch)..."
 
-    GOOS=$os GOARCH=$arch go build -ldflags "${ldflags}" -o ${resultDir}/fastestPort .
+    GOOS=$os GOARCH=$arch go build -ldflags "${ldflags}" -o ${resultDir}/fastest-port .
     cp config.toml ${resultDir}
 
 }
@@ -89,7 +89,7 @@ _build(){
 _pack(){
     local os=${1:?'missing GOOS'}
     local arch=${2:?'missing GOARCH'}
-    local resultDir="fastestPort-$os-$arch"
+    local resultDir="fastest-port-$os-$arch"
 
     _build $os $arch
     tar -jcvf ${resultDir}.tar.bz2 ${resultDir}
